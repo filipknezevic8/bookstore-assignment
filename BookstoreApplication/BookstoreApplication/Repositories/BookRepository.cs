@@ -34,9 +34,24 @@ namespace BookstoreApplication.Repositories
             _context.SaveChanges();
         }
 
+        //public void Update(Book book)
+        //{
+        //    _context.Books.Update(book);
+        //    _context.SaveChanges();
+        //}
+
         public void Update(Book book)
         {
-            _context.Books.Update(book);
+            var existing = _context.Books.FirstOrDefault(b => b.Id == book.Id);
+            if (existing == null) return;
+
+            existing.Title = book.Title;
+            existing.PageCount = book.PageCount;
+            existing.PublishedDate = book.PublishedDate;
+            existing.ISBN = book.ISBN;
+            existing.AuthorId = book.AuthorId;
+            existing.PublisherId = book.PublisherId;
+
             _context.SaveChanges();
         }
 
