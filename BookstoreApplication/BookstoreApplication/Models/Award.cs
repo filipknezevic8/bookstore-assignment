@@ -7,6 +7,6 @@
         public required string Description { get; set; }
         public int StartedYear { get; set; }
 
-        public List<AuthorAward> AuthorAwards { get; set; }
+        public List<AuthorAward> AuthorAwards { get; set; } = new();
     }
 }
