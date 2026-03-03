@@ -12,35 +12,47 @@ namespace BookstoreApplication.Repositories
             _context = context;
         }
 
-        public List<Publisher> GetAll()
+        public async Task<List<Publisher>> GetAll()
         {
-            return _context.Publishers.ToList();
+            return await _context.Publishers.ToListAsync();
         }
 
-        public Publisher? GetById(int id)
+        public async Task<Publisher?> GetById(int id)
         {
-            return _context.Publishers.FirstOrDefault(p => p.Id == id);
+            return await _context.Publishers.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public void Add(Publisher publisher)
+        public async Task Add(Publisher publisher)
         {
             _context.Publishers.Add(publisher);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void Update(Publisher publisher)
+        //public async Task Update(Publisher publisher)
+        //{
+        //    _context.Publishers.Update(publisher);
+        //    await _context.SaveChangesAsync();
+        //}
+
+        public async Task Update(Publisher publisher)
         {
-            _context.Publishers.Update(publisher);
-            _context.SaveChanges();
+            var existing = await _context.Publishers.FirstOrDefaultAsync(p => p.Id == publisher.Id);
+            if (existing == null) return;
+
+            existing.Name = publisher.Name;
+            existing.Address = publisher.Address;
+            existing.Website = publisher.Website;
+
+            await _context.SaveChangesAsync();
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            var publisher = GetById(id);
+            var publisher = await GetById(id);
             if (publisher != null)
             {
                 _context.Publishers.Remove(publisher);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
     }

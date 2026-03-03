@@ -6,22 +6,22 @@ namespace BookstoreApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PublishersController : ControllerBase
+    public class AwardsController : ControllerBase
     {
-        private readonly PublisherService _publisherService;
+        private readonly AwardService _awardService;
 
-        public PublishersController(AppDbContext context)
+        public AwardsController(AppDbContext context)
         {
-            _publisherService = new PublisherService(context);
+            _awardService = new AwardService(context);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Publisher>>> GetPublishers()
+        public async Task<ActionResult<List<Award>>> GetAwards()
         {
             try
             {
-                var publishers = await _publisherService.GetAll();
-                return Ok(publishers);
+                var awards = await _awardService.GetAll();
+                return Ok(awards);
             }
             catch (Exception ex)
             {
@@ -30,12 +30,12 @@ namespace BookstoreApplication.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Publisher>> GetPublisher(int id)
+        public async Task<ActionResult<Award>> GetAward(int id)
         {
             try
             {
-                var publisher = await _publisherService.GetById(id);
-                return Ok(publisher);
+                var award = await _awardService.GetById(id);
+                return Ok(award);
             }
             catch (KeyNotFoundException ex)
             {
@@ -48,12 +48,12 @@ namespace BookstoreApplication.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Publisher>> PostPublisher(Publisher publisher)
+        public async Task<ActionResult<Award>> PostAward(Award award)
         {
             try
             {
-                var createdPublisher = await _publisherService.Create(publisher);
-                return Created(string.Empty, createdPublisher);
+                var createdAward = await _awardService.Create(award);
+                return Created(string.Empty, createdAward);
             }
             catch (ArgumentException ex)
             {
@@ -66,12 +66,12 @@ namespace BookstoreApplication.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Publisher>> PutPublisher(int id, Publisher publisher)
+        public async Task<ActionResult<Award>> PutAward(int id, Award award)
         {
             try
             {
-                var updatedPublisher = await _publisherService.Update(id, publisher);
-                return Ok(updatedPublisher);
+                var updatedAward = await _awardService.Update(id, award);
+                return Ok(updatedAward);
             }
             catch (ArgumentException ex)
             {
@@ -88,11 +88,11 @@ namespace BookstoreApplication.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeletePublisher(int id)
+        public async Task<IActionResult> DeleteAward(int id)
         {
             try
             {
-                await _publisherService.Delete(id);
+                await _awardService.Delete(id);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)

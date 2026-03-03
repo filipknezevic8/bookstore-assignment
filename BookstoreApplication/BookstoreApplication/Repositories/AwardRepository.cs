@@ -12,35 +12,47 @@ namespace BookstoreApplication.Repositories
             _context = context;
         }
 
-        public List<Award> GetAll()
+        public async Task<List<Award>> GetAll()
         {
-            return _context.Awards.ToList();
+            return await _context.Awards.ToListAsync();
         }
 
-        public Award? GetById(int id)
+        public async Task<Award?> GetById(int id)
         {
-            return _context.Awards.FirstOrDefault(a => a.Id == id);
+            return await _context.Awards.FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public void Add(Award award)
+        public async Task Add(Award award)
         {
             _context.Awards.Add(award);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void Update(Award award)
+        //public async Task Update(Award award)
+        //{
+        //    _context.Awards.Update(award);
+        //    await _context.SaveChangesAsync();
+        //}
+
+        public async Task Update(Award award)
         {
-            _context.Awards.Update(award);
-            _context.SaveChanges();
+            var existing = await _context.Awards.FirstOrDefaultAsync(a => a.Id == award.Id);
+            if (existing == null) return;
+
+            existing.Name = award.Name;
+            existing.Description = award.Description;
+            existing.StartedYear = award.StartedYear;
+
+            await _context.SaveChangesAsync();
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            var award = GetById(id);
+            var award = await GetById(id);
             if (award != null)
             {
                 _context.Awards.Remove(award);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
     }

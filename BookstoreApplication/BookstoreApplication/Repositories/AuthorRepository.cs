@@ -12,35 +12,47 @@ namespace BookstoreApplication.Repositories
             _context = context;
         }
 
-        public List<Author> GetAll()
+        public async Task<List<Author>> GetAll()
         {
-            return _context.Authors.ToList();
+            return await _context.Authors.ToListAsync();
         }
 
-        public Author? GetById(int id)
+        public async Task<Author?> GetById(int id)
         {
-            return _context.Authors.FirstOrDefault(a => a.Id == id);
+            return await _context.Authors.FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public void Add(Author author)
+        public async Task Add(Author author)
         {
             _context.Authors.Add(author);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void Update(Author author)
+        //public async Task Update(Author author)
+        //{
+        //    _context.Authors.Update(author);
+        //    await _context.SaveChangesAsync();
+        //}
+
+        public async Task Update(Author author)
         {
-            _context.Authors.Update(author);
-            _context.SaveChanges();
+            var existing = await _context.Authors.FirstOrDefaultAsync(a => a.Id == author.Id);
+            if (existing == null) return;
+
+            existing.FullName = author.FullName;
+            existing.Biography = author.Biography;
+            existing.DateOfBirth = author.DateOfBirth;
+
+            await _context.SaveChangesAsync();
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            var author = GetById(id);
+            var author = await GetById(id);
             if (author != null)
             {
                 _context.Authors.Remove(author);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
     }

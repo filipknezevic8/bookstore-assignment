@@ -1,5 +1,5 @@
 ﻿using BookstoreApplication.Models;
-using BookstoreApplication.Repositories;
+using BookstoreApplication.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookstoreApplication.Controllers
@@ -8,94 +8,101 @@ namespace BookstoreApplication.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-        private readonly BookRepository _bookRepository;
-        private readonly AuthorRepository _authorRepository;
-        private readonly PublisherRepository _publisherRepository;
+        private readonly BookService _bookService;
 
-        public BooksController(BookRepository bookRepository, AuthorRepository authorRepository, PublisherRepository publisherRepository)
+        public BooksController(AppDbContext context)
         {
-            _bookRepository = bookRepository;
-            _authorRepository = authorRepository;
-            _publisherRepository = publisherRepository;
+            _bookService = new BookService(context);
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<ActionResult<List<Book>>> GetBooks()
         {
-            return Ok(_bookRepository.GetAll());
+            try
+            {
+                var books = await _bookService.GetAll();
+                return Ok(books);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetOne(int id)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Book>> GetBook(int id)
         {
-            var book = _bookRepository.GetById(id);
-            if (book == null)
+            try
             {
-                return NotFound();
+                var book = await _bookService.GetById(id);
+                return Ok(book);
             }
-            return Ok(book);
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
         [HttpPost]
-        public IActionResult Post(Book book)
+        public async Task<ActionResult<Book>> PostBook(Book book)
         {
-            var author = _authorRepository.GetById(book.AuthorId);
-            if (author == null)
+            try
             {
-                return BadRequest();
+                var createdBook = await _bookService.Create(book);
+                return Created(string.Empty, createdBook);
             }
-
-            var publisher = _publisherRepository.GetById(book.PublisherId);
-            if (publisher == null)
+            catch (ArgumentException ex)
             {
-                return BadRequest();
+                return BadRequest(new { error = ex.Message });
             }
-
-            _bookRepository.Add(book);
-            return Ok(book);
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, Book book)
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<Book>> PutBook(int id, Book book)
         {
-            if (id != book.Id)
+            try
             {
-                return BadRequest();
+                var updatedBook = await _bookService.Update(id, book);
+                return Ok(updatedBook);
             }
-
-            var existing = _bookRepository.GetById(id);
-            if (existing == null)
+            catch (ArgumentException ex)
             {
-                return NotFound();
+                return BadRequest(new { error = ex.Message });
             }
-
-            var author = _authorRepository.GetById(book.AuthorId);
-            if (author == null)
+            catch (KeyNotFoundException ex)
             {
-                return BadRequest();
+                return NotFound(new { error = ex.Message });
             }
-
-            var publisher = _publisherRepository.GetById(book.PublisherId);
-            if (publisher == null)
+            catch (Exception ex)
             {
-                return BadRequest();
+                return Problem(ex.Message);
             }
-
-            _bookRepository.Update(book);
-            return Ok(book);
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteBook(int id)
         {
-            var book = _bookRepository.GetById(id);
-            if (book == null)
+            try
             {
-                return NotFound();
+                await _bookService.Delete(id);
+                return NoContent();
             }
-
-            _bookRepository.Delete(id);
-            return NoContent();
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
     }
 }

@@ -1,8 +1,6 @@
-﻿using BookstoreApplication.Data;
-using BookstoreApplication.Models;
+﻿using BookstoreApplication.Models;
+using BookstoreApplication.Services;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace BookstoreApplication.Controllers
 {
@@ -10,75 +8,101 @@ namespace BookstoreApplication.Controllers
     [ApiController]
     public class AuthorsController : ControllerBase
     {
-        // GET: api/authors
+        private readonly AuthorService _authorService;
+
+        public AuthorsController(AppDbContext context)
+        {
+            _authorService = new AuthorService(context);
+        }
+
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<ActionResult<List<Author>>> GetAuthors()
         {
-            return Ok(DataStore.Authors);
-        }
-
-        // GET api/authors/5
-        [HttpGet("{id}")]
-        public IActionResult GetOne(int id)
-        {
-            var author = DataStore.Authors.FirstOrDefault(a => a.Id == id);
-            if (author == null)
+            try
             {
-                return NotFound();
+                var authors = await _authorService.GetAll();
+                return Ok(authors);
             }
-            return Ok(author);
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
-        // POST api/authors
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Author>> GetAuthor(int id)
+        {
+            try
+            {
+                var author = await _authorService.GetById(id);
+                return Ok(author);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
         [HttpPost]
-        public IActionResult Post(Author author)
+        public async Task<ActionResult<Author>> PostAuthor(Author author)
         {
-            author.Id = DataStore.GetNewAuthorId();
-            DataStore.Authors.Add(author);
-            return Ok(author);
+            try
+            {
+                var createdAuthor = await _authorService.Create(author);
+                return Created(string.Empty, createdAuthor);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
-        // PUT api/authors/5
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, Author author)
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<Author>> PutAuthor(int id, Author author)
         {
-            if (id != author.Id)
+            try
             {
-                return BadRequest();
+                var updatedAuthor = await _authorService.Update(id, author);
+                return Ok(updatedAuthor);
             }
-
-            var existingAuthor = DataStore.Authors.FirstOrDefault(a => a.Id == id);
-            if (existingAuthor == null)
+            catch (ArgumentException ex)
             {
-                return NotFound();
+                return BadRequest(new { error = ex.Message });
             }
-
-            int index = DataStore.Authors.IndexOf(existingAuthor);
-            if (index == -1)
+            catch (KeyNotFoundException ex)
             {
-                return NotFound();
-                
+                return NotFound(new { error = ex.Message });
             }
-
-            DataStore.Authors[index] = author;
-            return Ok(author);
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
-        // DELETE api/authors/5
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteAuthor(int id)
         {
-            var author = DataStore.Authors.FirstOrDefault(a => a.Id == id);
-            if (author == null)
+            try
             {
-                return NotFound();
+                await _authorService.Delete(id);
+                return NoContent();
             }
-            DataStore.Authors.Remove(author);
-
-            // kaskadno brisanje svih knjiga obrisanog autora
-            DataStore.Books.RemoveAll(b => b.AuthorId == id);
-
-            return NoContent();
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
     }
 }

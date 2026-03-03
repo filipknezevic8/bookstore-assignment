@@ -12,26 +12,26 @@ namespace BookstoreApplication.Repositories
             _context = context;
         }
 
-        public List<Book> GetAll()
+        public async Task<List<Book>> GetAll()
         {
-            return _context.Books
+            return await _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.Publisher)
-                .ToList();
+                .ToListAsync();
         }
 
-        public Book? GetById(int id)
+        public async Task<Book?> GetById(int id)
         {
-            return _context.Books
+            return await _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.Publisher)
-                .FirstOrDefault(b => b.Id == id);
+                .FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public void Add(Book book)
+        public async Task Add(Book book)
         {
             _context.Books.Add(book);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         //public void Update(Book book)
@@ -40,9 +40,9 @@ namespace BookstoreApplication.Repositories
         //    _context.SaveChanges();
         //}
 
-        public void Update(Book book)
+        public async Task Update(Book book)
         {
-            var existing = _context.Books.FirstOrDefault(b => b.Id == book.Id);
+            var existing = await _context.Books.FirstOrDefaultAsync(b => b.Id == book.Id);
             if (existing == null) return;
 
             existing.Title = book.Title;
@@ -52,16 +52,16 @@ namespace BookstoreApplication.Repositories
             existing.AuthorId = book.AuthorId;
             existing.PublisherId = book.PublisherId;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            var book = GetById(id);
+            var book = await GetById(id);
             if (book != null)
             {
                 _context.Books.Remove(book);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
     }
