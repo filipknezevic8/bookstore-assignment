@@ -1,5 +1,4 @@
 ﻿using BookstoreApplication.Models;
-using BookstoreApplication.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookstoreApplication.Controllers
@@ -8,11 +7,11 @@ namespace BookstoreApplication.Controllers
     [ApiController]
     public class AwardsController : ControllerBase
     {
-        private readonly AwardService _awardService;
+        private readonly IAwardService _awardService;
 
-        public AwardsController(AppDbContext context)
+        public AwardsController(IAwardService awardService)
         {
-            _awardService = new AwardService(context);
+            _awardService = awardService;
         }
 
         [HttpGet]

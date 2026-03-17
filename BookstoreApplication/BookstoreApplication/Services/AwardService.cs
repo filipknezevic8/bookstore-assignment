@@ -1,15 +1,14 @@
 ﻿using BookstoreApplication.Models;
-using BookstoreApplication.Repositories;
 
 namespace BookstoreApplication.Services
 {
-    public class AwardService
+    public class AwardService : IAwardService
     {
-        private readonly AwardRepository _awardRepository;
+        private readonly IAwardRepository _awardRepository;
 
-        public AwardService(AppDbContext context)
+        public AwardService(IAwardRepository awardRepository)
         {
-            _awardRepository = new AwardRepository(context);
+            _awardRepository = awardRepository;
         }
 
         public async Task<List<Award>> GetAll()

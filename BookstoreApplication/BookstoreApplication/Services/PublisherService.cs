@@ -1,15 +1,14 @@
 ﻿using BookstoreApplication.Models;
-using BookstoreApplication.Repositories;
 
 namespace BookstoreApplication.Services
 {
-    public class PublisherService
+    public class PublisherService : IPublisherService
     {
-        private readonly PublisherRepository _publisherRepository;
+        private readonly IPublisherRepository _publisherRepository;
 
-        public PublisherService(AppDbContext context)
+        public PublisherService(IPublisherRepository publisherRepository)
         {
-            _publisherRepository = new PublisherRepository(context);
+            _publisherRepository = publisherRepository;
         }
 
         public async Task<List<Publisher>> GetAll()

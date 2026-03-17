@@ -1,5 +1,4 @@
 ﻿using BookstoreApplication.Models;
-using BookstoreApplication.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookstoreApplication.Controllers
@@ -8,11 +7,11 @@ namespace BookstoreApplication.Controllers
     [ApiController]
     public class PublishersController : ControllerBase
     {
-        private readonly PublisherService _publisherService;
+        private readonly IPublisherService _publisherService;
 
-        public PublishersController(AppDbContext context)
+        public PublishersController(IPublisherService publisherService)
         {
-            _publisherService = new PublisherService(context);
+            _publisherService = publisherService;
         }
 
         [HttpGet]
