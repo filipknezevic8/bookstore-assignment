@@ -1,4 +1,5 @@
-﻿using BookstoreApplication.Models;
+﻿using BookstoreApplication.Exceptions;
+using BookstoreApplication.Models;
 
 namespace BookstoreApplication.Services
 {
@@ -22,7 +23,7 @@ namespace BookstoreApplication.Services
 
             if (publisher == null)
             {
-                throw new KeyNotFoundException($"Publisher with id {id} was not found.");
+                throw new NotFoundException(id);
             }
 
             return publisher;
@@ -32,7 +33,7 @@ namespace BookstoreApplication.Services
         {
             if (publisher == null)
             {
-                throw new ArgumentNullException(nameof(publisher));
+                throw new BadRequestException("Publisher cannot be null.");
             }
 
             await _publisherRepository.Add(publisher);
@@ -43,19 +44,19 @@ namespace BookstoreApplication.Services
         {
             if (publisher == null)
             {
-                throw new ArgumentNullException(nameof(publisher));
+                throw new BadRequestException("Publisher cannot be null.");
             }
 
             if (id != publisher.Id)
             {
-                throw new ArgumentException("Id mismatch between route and body.");
+                throw new BadRequestException("Id mismatch between route and body.");
             }
 
             var existingPublisher = await _publisherRepository.GetById(id);
 
             if (existingPublisher == null)
             {
-                throw new KeyNotFoundException($"Publisher with id {id} was not found.");
+                throw new NotFoundException(id);
             }
 
             await _publisherRepository.Update(publisher);
@@ -68,7 +69,7 @@ namespace BookstoreApplication.Services
 
             if (publisher == null)
             {
-                throw new KeyNotFoundException($"Publisher with id {id} was not found.");
+                throw new NotFoundException(id);
             }
 
             await _publisherRepository.Delete(id);

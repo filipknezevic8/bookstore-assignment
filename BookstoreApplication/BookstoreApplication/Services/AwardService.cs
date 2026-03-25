@@ -1,4 +1,5 @@
-﻿using BookstoreApplication.Models;
+﻿using BookstoreApplication.Exceptions;
+using BookstoreApplication.Models;
 
 namespace BookstoreApplication.Services
 {
@@ -22,7 +23,7 @@ namespace BookstoreApplication.Services
 
             if (award == null)
             {
-                throw new KeyNotFoundException($"Award with id {id} was not found.");
+                throw new NotFoundException(id);
             }
 
             return award;
@@ -32,7 +33,7 @@ namespace BookstoreApplication.Services
         {
             if (award == null)
             {
-                throw new ArgumentNullException(nameof(award));
+                throw new BadRequestException("Award cannot be null.");
             }
 
             await _awardRepository.Add(award);
@@ -43,19 +44,19 @@ namespace BookstoreApplication.Services
         {
             if (award == null)
             {
-                throw new ArgumentNullException(nameof(award));
+                throw new BadRequestException("Award cannot be null.");
             }
 
             if (id != award.Id)
             {
-                throw new ArgumentException("Id mismatch between route and body.");
+                throw new BadRequestException("Id mismatch between route and body.");
             }
 
             var existingAward = await _awardRepository.GetById(id);
 
             if (existingAward == null)
             {
-                throw new KeyNotFoundException($"Award with id {id} was not found.");
+                throw new NotFoundException(id);
             }
 
             await _awardRepository.Update(award);
@@ -68,7 +69,7 @@ namespace BookstoreApplication.Services
 
             if (award == null)
             {
-                throw new KeyNotFoundException($"Award with id {id} was not found.");
+                throw new NotFoundException(id);
             }
 
             await _awardRepository.Delete(id);

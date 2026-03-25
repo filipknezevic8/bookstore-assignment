@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BookstoreApplication.DTOs;
+using BookstoreApplication.Exceptions;
 using BookstoreApplication.Models;
 
 namespace BookstoreApplication.Services
@@ -28,7 +29,7 @@ namespace BookstoreApplication.Services
 
             if (book == null)
             {
-                throw new KeyNotFoundException($"Book with id {id} was not found.");
+                throw new NotFoundException(id);
             }
 
             var dto = _mapper.Map<BookDetailsDto>(book);
@@ -39,7 +40,7 @@ namespace BookstoreApplication.Services
         {
             if (book == null)
             {
-                throw new ArgumentNullException(nameof(book));
+                throw new BadRequestException("Book cannot be null.");
             }
 
             await _bookRepository.Add(book);
@@ -50,19 +51,19 @@ namespace BookstoreApplication.Services
         {
             if (book == null)
             {
-                throw new ArgumentNullException(nameof(book));
+                throw new BadRequestException("Book cannot be null.");
             }
 
             if (id != book.Id)
             {
-                throw new ArgumentException("Id mismatch between route and body.");
+                throw new BadRequestException("Id mismatch between route and body.");
             }
 
             var existingBook = await _bookRepository.GetById(id);
 
             if (existingBook == null)
             {
-                throw new KeyNotFoundException($"Book with id {id} was not found.");
+                throw new NotFoundException(id);
             }
 
             await _bookRepository.Update(book);
@@ -75,7 +76,7 @@ namespace BookstoreApplication.Services
 
             if (book == null)
             {
-                throw new KeyNotFoundException($"Book with id {id} was not found.");
+                throw new NotFoundException(id);
             }
 
             await _bookRepository.Delete(id);
