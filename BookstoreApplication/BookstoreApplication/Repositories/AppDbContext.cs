@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BookstoreApplication.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace BookstoreApplication.Models
+namespace BookstoreApplication.Repositories
 {
     public class AppDbContext : DbContext
     {
