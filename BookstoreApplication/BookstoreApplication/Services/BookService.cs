@@ -19,7 +19,18 @@ namespace BookstoreApplication.Services
             _logger = logger;
         }
 
-        public async Task<List<BookDto>> GetAll()
+        public async Task<List<Book>> GetAll()
+        {
+            _logger.LogInformation("Fetching all books.");
+
+            var books = await _bookRepository.GetAll();
+
+            _logger.LogInformation($"Fetched {books.Count} books.");
+
+            return books;
+        }
+
+        public async Task<List<BookDto>> GetAllDtos()
         {
             _logger.LogInformation("Fetching all books.");
 

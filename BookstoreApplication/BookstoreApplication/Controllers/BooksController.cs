@@ -16,9 +16,16 @@ namespace BookstoreApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<BookDto>>> GetBooks()
+        public async Task<ActionResult<List<Book>>> GetBooks()
         {
             var books = await _bookService.GetAll();
+            return Ok(books);
+        }
+
+        [HttpGet("dtos")]
+        public async Task<ActionResult<List<BookDto>>> GetBookDtos()
+        {
+            var books = await _bookService.GetAllDtos();
             return Ok(books);
         }
 

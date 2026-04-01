@@ -1,5 +1,6 @@
 ﻿using BookstoreApplication.Exceptions;
 using BookstoreApplication.Models;
+using BookstoreApplication.Utils;
 
 namespace BookstoreApplication.Services
 {
@@ -73,6 +74,16 @@ namespace BookstoreApplication.Services
             }
 
             await _publisherRepository.Delete(id);
+        }
+
+        public async Task<List<Publisher>> GetAllSorted(int sortType)
+        {
+            return await _publisherRepository.GetAllSorted(sortType);
+        }
+
+        public async Task<List<SortTypeOption>> GetSortTypes()
+        {
+            return await _publisherRepository.GetSortTypes();
         }
     }
 }
