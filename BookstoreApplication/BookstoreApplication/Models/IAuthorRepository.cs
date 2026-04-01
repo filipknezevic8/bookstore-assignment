@@ -1,4 +1,6 @@
-﻿namespace BookstoreApplication.Models
+﻿using BookstoreApplication.Utils;
+
+namespace BookstoreApplication.Models
 {
     public interface IAuthorRepository
     {
@@ -7,5 +9,6 @@
         Task Add(Author author);
         Task Update(Author author);
         Task Delete(int id);
+        Task<PaginatedList<Author>> GetAllPaged(int page);
     }
 }

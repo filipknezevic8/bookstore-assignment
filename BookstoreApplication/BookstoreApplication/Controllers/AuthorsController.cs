@@ -1,4 +1,7 @@
-﻿using BookstoreApplication.Models;
+﻿using BookstoreApplication.DTOs;
+using BookstoreApplication.Exceptions;
+using BookstoreApplication.Models;
+using BookstoreApplication.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookstoreApplication.Controllers
@@ -47,6 +50,18 @@ namespace BookstoreApplication.Controllers
         {
             await _authorService.Delete(id);
             return NoContent();
+        }
+
+        // GET /api/authors/paging?page=2
+        [HttpGet("paging")]
+        public async Task<ActionResult<PaginatedList<AuthorDTO>>> GetAuthorsPage([FromQuery] int page = 1)
+        {
+            if (page < 1)
+            {
+                throw new BadRequestException("Page value is invalid.");
+            }
+
+            return Ok(await _authorService.GetAllPaged(page));
         }
     }
 }
