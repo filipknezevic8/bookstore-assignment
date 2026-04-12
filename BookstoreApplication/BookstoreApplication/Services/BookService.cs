@@ -2,6 +2,7 @@
 using BookstoreApplication.DTOs;
 using BookstoreApplication.Exceptions;
 using BookstoreApplication.Models;
+using BookstoreApplication.Utils;
 using Microsoft.Extensions.Logging;
 
 namespace BookstoreApplication.Services
@@ -19,16 +20,16 @@ namespace BookstoreApplication.Services
             _logger = logger;
         }
 
-        public async Task<List<Book>> GetAll()
-        {
-            _logger.LogInformation("Fetching all books.");
+        //public async Task<List<Book>> GetAll()
+        //{
+        //    _logger.LogInformation("Fetching all books.");
 
-            var books = await _bookRepository.GetAll();
+        //    var books = await _bookRepository.GetAll();
 
-            _logger.LogInformation($"Fetched {books.Count} books.");
+        //    _logger.LogInformation($"Fetched {books.Count} books.");
 
-            return books;
-        }
+        //    return books;
+        //}
 
         public async Task<List<BookDto>> GetAllDtos()
         {
@@ -123,6 +124,18 @@ namespace BookstoreApplication.Services
             await _bookRepository.Delete(id);
 
             _logger.LogInformation($"Book with id {id} deleted.");
+        }
+
+        public async Task<IEnumerable<BookDto>> GetAllSorted(int sortType)
+        {
+            var books = await _bookRepository.GetAllSorted(sortType);
+            var dtos = books.Select(_mapper.Map<BookDto>).ToList();
+            return dtos;
+        }
+
+        public async Task<List<BookSortTypeOption>> GetSortTypes()
+        {
+            return await _bookRepository.GetSortTypes();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BookstoreApplication.Models;
+using BookstoreApplication.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Repositories
@@ -6,6 +7,7 @@ namespace BookstoreApplication.Repositories
     public class BookRepository : IBookRepository
     {
         private readonly AppDbContext _context;
+        private const int PageSize = 4;
 
         public BookRepository(AppDbContext context)
         {
@@ -63,6 +65,42 @@ namespace BookstoreApplication.Repositories
                 _context.Books.Remove(book);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<IEnumerable<Book>> GetAllSorted(int sortType)
+        {
+            IQueryable<Book> books = _context.Books
+                .Include(b => b.Author)
+                .Include(b => b.Publisher);
+
+            books = SortBooks(books, sortType);
+            return await books.ToListAsync();
+        }
+
+        public async Task<List<BookSortTypeOption>> GetSortTypes()
+        {
+            List<BookSortTypeOption> options = new List<BookSortTypeOption>();
+            var enumValues = Enum.GetValues(typeof(BookSortType));
+
+            foreach (BookSortType sortType in enumValues)
+            {
+                options.Add(new BookSortTypeOption(sortType));
+            }
+
+            return options;
+        }
+
+        private static IQueryable<Book> SortBooks(IQueryable<Book> books, int sortType)
+        {
+            return sortType switch
+            {
+                (int)BookSortType.TITLE_DESCENDING => books.OrderByDescending(b => b.Title),
+                (int)BookSortType.PUBLISHED_DATE_ASCENDING => books.OrderBy(b => b.PublishedDate),
+                (int)BookSortType.PUBLISHED_DATE_DESCENDING => books.OrderByDescending(b => b.PublishedDate),
+                (int)BookSortType.AUTHOR_NAME_ASCENDING => books.OrderBy(b => b.Author.FullName),
+                (int)BookSortType.AUTHOR_NAME_DESCENDING => books.OrderByDescending(b => b.Author.FullName),
+                _ => books.OrderBy(b => b.Title)
+            };
         }
     }
 }
