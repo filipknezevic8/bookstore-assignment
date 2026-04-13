@@ -137,5 +137,12 @@ namespace BookstoreApplication.Services
         {
             return await _bookRepository.GetSortTypes();
         }
+
+        public async Task<IEnumerable<BookDto>> GetAllFilteredAndSorted(BookFilter filter, int sortType)
+        {
+            var books = await _bookRepository.GetAllFilteredAndSorted(filter, sortType);
+            var dtos = books.Select(_mapper.Map<BookDto>).ToList();
+            return dtos;
+        }
     }
 }

@@ -13,5 +13,6 @@ namespace BookstoreApplication.Models
         Task Delete(int id);
         Task<IEnumerable<BookDto>> GetAllSorted(int sortType);
         Task<List<BookSortTypeOption>> GetSortTypes();
+        Task<IEnumerable<BookDto>> GetAllFilteredAndSorted(BookFilter filter, int sortType);
     }
 }

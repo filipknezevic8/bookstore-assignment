@@ -56,6 +56,12 @@ namespace BookstoreApplication.Controllers
             return Created(string.Empty, createdBook);
         }
 
+        [HttpPost("filterAndSort")]
+        public async Task<IActionResult> GetFilteredAndSortedBooks([FromBody] BookFilter filter, [FromQuery] int sortType = (int)BookSortType.TITLE_ASCENDING)
+        {
+            return Ok(await _bookService.GetAllFilteredAndSorted(filter, sortType));
+        }
+
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Book>> PutBook(int id, Book book)
         {

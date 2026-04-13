@@ -1,4 +1,5 @@
-﻿using BookstoreApplication.Utils;
+﻿using BookstoreApplication.DTOs;
+using BookstoreApplication.Utils;
 
 namespace BookstoreApplication.Models
 {
@@ -11,5 +12,6 @@ namespace BookstoreApplication.Models
         Task Delete(int id);
         Task<IEnumerable<Book>> GetAllSorted(int sortType);
         Task<List<BookSortTypeOption>> GetSortTypes();
+        Task<IEnumerable<Book>> GetAllFilteredAndSorted(BookFilter filter, int sortType);
     }
 }
