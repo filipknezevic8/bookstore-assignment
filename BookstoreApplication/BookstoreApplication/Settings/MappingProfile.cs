@@ -17,6 +17,8 @@ namespace BookstoreApplication.Settings
             CreateMap<Author, AuthorDTO>().ReverseMap();
 
             CreateMap<RegistrationDto, ApplicationUser>();
+
+            CreateMap<ApplicationUser, ProfileDto>();
         }
     }
 }

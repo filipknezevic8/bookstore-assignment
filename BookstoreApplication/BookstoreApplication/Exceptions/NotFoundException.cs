@@ -6,5 +6,10 @@
             : base($"Item with id {id} could not be found.")
         {
         }
+
+        public NotFoundException(string message)
+        : base(message)
+        {
+        }
     }
 }
