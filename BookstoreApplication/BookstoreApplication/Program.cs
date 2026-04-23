@@ -4,6 +4,7 @@ using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
 using BookstoreApplication.Services;
 using BookstoreApplication.Settings;
+using BookstoreApplication.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -132,9 +133,13 @@ builder.Logging.AddSerilog(logger);
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await SeedData.InitializeAsync(services);
+}
+
 // Configure the HTTP request pipeline.
-// Uključivanje autentifikacije
-app.UseAuthentication();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
@@ -147,6 +152,8 @@ app.UseRouting();
 
 app.UseCors("AllowAll");
 
+// Uključivanje autentifikacije i autorizacije
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

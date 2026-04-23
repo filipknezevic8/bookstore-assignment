@@ -35,6 +35,7 @@ namespace BookstoreApplication.Services
                 string errorMessage = string.Join("; ", result.Errors.Select(e => e.Description));
                 throw new BadRequestException(errorMessage);
             }
+            await _userManager.AddToRoleAsync(user, "Librarian");
         }
 
         public async Task<string> Login(LoginDto data)
@@ -66,6 +67,8 @@ namespace BookstoreApplication.Services
             };
 
             // Konfiguracija za generisanje tokena
+            var roles = await _userManager.GetRolesAsync(user);
+            claims.AddRange(roles.Select(role => new Claim("role", role)));
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(

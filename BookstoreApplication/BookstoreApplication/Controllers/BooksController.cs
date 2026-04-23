@@ -1,6 +1,7 @@
 ﻿using BookstoreApplication.DTOs;
 using BookstoreApplication.Models;
 using BookstoreApplication.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookstoreApplication.Controllers
@@ -49,6 +50,7 @@ namespace BookstoreApplication.Controllers
             return Ok(await _bookService.GetAllSorted(sortType));
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Book>> PostBook(Book book)
         {
@@ -62,6 +64,7 @@ namespace BookstoreApplication.Controllers
             return Ok(await _bookService.GetAllFilteredAndSorted(filter, sortType));
         }
 
+        [Authorize(Roles = "Editor")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Book>> PutBook(int id, Book book)
         {
@@ -69,6 +72,7 @@ namespace BookstoreApplication.Controllers
             return Ok(updatedBook);
         }
 
+        [Authorize(Roles = "Editor")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
