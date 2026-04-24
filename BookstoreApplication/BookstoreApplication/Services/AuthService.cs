@@ -101,5 +101,36 @@ namespace BookstoreApplication.Services
 
             return _mapper.Map<ProfileDto>(user);
         }
+
+        public async Task<string> LoginWithGoogle(string email, string name, string surname)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                // Ako korisnik ne postoji u bazi, može se kreirati
+                user = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    Name = name,
+                    Surname = surname
+                };
+
+                var result = await _userManager.CreateAsync(user);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "Librarian"); // default role
+                }
+                else
+                {
+                    throw new BadRequestException("Google login failed: user creation error");
+                }
+            }
+
+            // Ponovo se koristi GenerateJwt, isto kao za običan login
+            var token = await GenerateJwt(user);
+            return token;
+        }
     }
 }
