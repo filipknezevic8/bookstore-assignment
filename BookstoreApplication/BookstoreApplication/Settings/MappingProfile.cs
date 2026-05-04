@@ -19,6 +19,9 @@ namespace BookstoreApplication.Settings
             CreateMap<RegistrationDto, ApplicationUser>();
 
             CreateMap<ApplicationUser, ProfileDto>();
+
+            CreateMap<SaveIssueDTO, Issue>()
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
         }
     }
 }

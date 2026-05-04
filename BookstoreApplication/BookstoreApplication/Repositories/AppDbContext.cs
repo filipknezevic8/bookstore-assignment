@@ -14,6 +14,7 @@ namespace BookstoreApplication.Repositories
         public DbSet<Publisher> Publishers { get; set; }
         public DbSet<Award> Awards { get; set; }
         public DbSet<AuthorAward> AuthorAwards { get; set; }
+        public DbSet<Issue> Issues { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -52,6 +53,10 @@ namespace BookstoreApplication.Repositories
                 .HasForeignKey(b => b.PublisherId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Issue>()
+                .Property(i => i.IssueNumber)
+                .HasColumnName("issue_number");
+            
             // -- seed authors (5)
             modelBuilder.Entity<Author>().HasData(
               new Author { Id = 1, FullName = "George Orwell", Biography = "British writer and journalist.", DateOfBirth = new DateTime(1903, 6, 25, 0, 0, 0, DateTimeKind.Utc) },
